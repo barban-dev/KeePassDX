@@ -32,6 +32,12 @@
             android:orderInCategory="81"
             app:iconTint="?attr/colorControlNormal"
             app:showAsAction="ifRoom" />
+        <item android:id="@+id/menu_simple_mode"
+            android:icon="@drawable/ic_view_list_white_24dp"
+            android:title="@string/simple_mode"
+            android:orderInCategory="82"
+            app:iconTint="?attr/colorControlNormal"
+            app:showAsAction="ifRoom" />
         <item android:id="@+id/menu_lock_all"
             android:icon="@drawable/ic_lock_white_24dp"
             android:title="@string/lock"

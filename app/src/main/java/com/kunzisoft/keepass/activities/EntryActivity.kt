@@ -73,6 +73,7 @@ import com.kunzisoft.keepass.services.AttachmentFileNotificationService
 import com.kunzisoft.keepass.services.DatabaseTaskNotificationService.Companion.ACTION_DATABASE_DELETE_ENTRY_HISTORY
 import com.kunzisoft.keepass.services.DatabaseTaskNotificationService.Companion.ACTION_DATABASE_RESTORE_ENTRY_HISTORY
 import com.kunzisoft.keepass.settings.PreferencesUtil
+import com.kunzisoft.keepass.simplemode.SimpleMode
 import com.kunzisoft.keepass.tasks.ActionRunnable
 import com.kunzisoft.keepass.tasks.AttachmentFileBinderManager
 import com.kunzisoft.keepass.timeout.TimeoutHelper
@@ -284,7 +285,8 @@ class EntryActivity : DatabaseLockActivity() {
                         editFab?.visibility = if (!entryState.isReadOnly
                             && entryState.showFloatingActionButton) View.VISIBLE else View.GONE
                         // Assign history dedicated view
-                        historyView?.visibility = if (entryState.showHistoryView) View.VISIBLE else View.GONE
+                        historyView?.visibility = if (entryState.showHistoryView
+                            && !SimpleMode.isEnabled(this@EntryActivity)) View.VISIBLE else View.GONE
                         // Refresh Menu
                         invalidateOptionsMenu()
                     }
@@ -490,7 +492,8 @@ class EntryActivity : DatabaseLockActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         super.onCreateOptionsMenu(menu)
-        if (mEntryViewModel.databaseActionsAllowed()) {
+        // No database action in the simplified mode
+        if (mEntryViewModel.databaseActionsAllowed() && !SimpleMode.isEnabled(this)) {
             val inflater = menuInflater
             inflater.inflate(R.menu.database, menu)
 

@@ -785,4 +785,21 @@
     <string name="get_keepro">Ricevi supporto KeePro</string>
     <string name="html_about_get_keepro">Acquistando il &lt;strong&gt;supporto KeePro&lt;/strong&gt;, finanzierai direttamente lo sviluppo attivo e continuo, le funzionalità future, e sbloccherai stili visivi opzionali.</string>
     <string name="invalid_db_hmac">Verifica della firma del database fallita. Può essere causato da un file corrotto o una modifica esterna all\'app.</string>
+    <!-- Modalità semplificata -->
+    <string name="simple_mode">Modalità semplificata</string>
+    <string name="simple_mode_choose_folder_title">Modalità semplificata: scegli la cartella di \"%1$s\"</string>
+    <string name="simple_mode_enable">Attiva</string>
+    <string name="simple_mode_enable_confirm_message">L\'app mostrerà solo le voci della cartella \"%2$s\" del database \"%1$s\", in sola lettura, dopo lo sblocco con l\'impronta digitale.\n\nTutte le altre funzioni saranno nascoste finché non tornerai alla modalità normale.</string>
+    <string name="simple_mode_requirements_title">Serve lo sblocco con impronta</string>
+    <string name="simple_mode_requirements_message">Per attivare la modalità semplificata lo sblocco con impronta digitale (dispositivo) deve essere attivo nelle impostazioni e collegato a questo database: blocca il database, poi riaprilo con la password principale e il pulsante dell\'impronta.</string>
+    <string name="simple_mode_unlock_hint">Tocca il pulsante dell\'impronta per aprire</string>
+    <string name="simple_mode_device_unlock_unavailable">Lo sblocco con impronta non è disponibile. Torna alla modalità normale per aprire il database.</string>
+    <string name="simple_mode_exit_app">Esci</string>
+    <string name="simple_mode_back_to_normal">Torna alla modalità normale</string>
+    <string name="simple_mode_exit_title">Uscire dalla modalità semplificata?</string>
+    <string name="simple_mode_exit_message">Il database verrà bloccato e l\'app verrà riavviata con tutte le sue funzioni.</string>
+    <string name="simple_mode_exit_confirm">Modalità normale</string>
+    <string name="simple_mode_search_hint">Cerca</string>
+    <string name="simple_mode_no_entry">Nessuna voce</string>
+    <string name="simple_mode_folder_not_found">La cartella della modalità semplificata non esiste più in questo database. Torna alla modalità normale per sceglierne un\'altra.</string>
 </resources>

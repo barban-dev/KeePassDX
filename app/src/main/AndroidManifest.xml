@@ -142,6 +142,17 @@
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.*" />
             </intent-filter>
         </activity>
+        <!-- Simplified mode -->
+        <activity
+            android:name="com.kunzisoft.keepass.simplemode.SimpleUnlockActivity"
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:configChanges="keyboardHidden" />
+        <activity
+            android:name="com.kunzisoft.keepass.simplemode.SimpleEntryListActivity"
+            android:exported="false"
+            android:configChanges="keyboardHidden"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <!-- Main Activity -->
         <activity
             android:name="com.kunzisoft.keepass.activities.GroupActivity"

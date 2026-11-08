@@ -65,6 +65,8 @@ import com.kunzisoft.keepass.model.SearchInfo
 import com.kunzisoft.keepass.services.DatabaseTaskNotificationService.Companion.ACTION_DATABASE_CREATE_TASK
 import com.kunzisoft.keepass.services.DatabaseTaskNotificationService.Companion.ACTION_DATABASE_LOAD_TASK
 import com.kunzisoft.keepass.settings.PreferencesUtil
+import com.kunzisoft.keepass.simplemode.SimpleMode
+import com.kunzisoft.keepass.simplemode.SimpleUnlockActivity
 import com.kunzisoft.keepass.tasks.ActionRunnable
 import com.kunzisoft.keepass.utils.AppUtil.isContributingUser
 import com.kunzisoft.keepass.utils.DexUtil
@@ -122,6 +124,13 @@ class FileDatabaseSelectActivity : DatabaseModeActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Simplified mode: only show the fingerprint unlock screen of the configured database
+        if (mSpecialMode == SpecialMode.DEFAULT && SimpleMode.isEnabled(this)) {
+            SimpleUnlockActivity.launch(this)
+            finish()
+            return
+        }
 
         // Enabling/disabling MagikeyboardService is normally done by DexModeReceiver, but this
         // additional check will allow the keyboard to be reenabled more easily if the app crashes

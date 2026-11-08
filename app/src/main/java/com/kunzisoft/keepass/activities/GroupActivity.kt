@@ -39,6 +39,7 @@ import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.view.ActionMode
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -80,6 +81,8 @@ import com.kunzisoft.keepass.credentialprovider.UserVerificationData
 import com.kunzisoft.keepass.credentialprovider.UserVerificationHelper.Companion.checkUserVerification
 import com.kunzisoft.keepass.credentialprovider.passkey.util.PasskeyHelper.buildPasskeyResponseAndSetResult
 import com.kunzisoft.keepass.credentialprovider.passkey.util.PasswordHelper.buildPasswordResponseAndSetResult
+import com.kunzisoft.keepass.app.database.CipherDatabaseAction
+import com.kunzisoft.keepass.app.database.FileDatabaseHistoryAction
 import com.kunzisoft.keepass.database.ContextualDatabase
 import com.kunzisoft.keepass.database.element.DateInstant
 import com.kunzisoft.keepass.database.element.EntryId
@@ -100,6 +103,7 @@ import com.kunzisoft.keepass.services.DatabaseTaskNotificationService.Companion.
 import com.kunzisoft.keepass.services.DatabaseTaskNotificationService.Companion.ACTION_DATABASE_UPDATE_GROUP_TASK
 import com.kunzisoft.keepass.services.DatabaseTaskNotificationService.Companion.getNewEntry
 import com.kunzisoft.keepass.settings.PreferencesUtil
+import com.kunzisoft.keepass.simplemode.SimpleMode
 import com.kunzisoft.keepass.settings.SettingsActivity
 import com.kunzisoft.keepass.tasks.ActionRunnable
 import com.kunzisoft.keepass.timeout.TimeoutHelper
@@ -383,6 +387,10 @@ class GroupActivity : DatabaseLockActivity() {
                     }
                     R.id.menu_lock_all -> {
                         lockAndExit()
+                    }
+                    R.id.menu_simple_mode -> {
+                        drawerLayout?.closeDrawer(GravityCompat.START)
+                        requestSimpleMode()
                     }
                     R.id.menu_contribute -> {
                         this@GroupActivity.openContributionLink()
@@ -1058,6 +1066,7 @@ class GroupActivity : DatabaseLockActivity() {
             menu.findItem(R.id.menu_merge_from)?.isVisible = mGroupViewModel.mergeFromDatabaseActionAllowed() && modeCondition
             menu.findItem(R.id.menu_save_copy_to)?.isVisible = mGroupViewModel.copyToDatabaseActionAllowed() && modeCondition
             menu.findItem(R.id.menu_about)?.isVisible = modeCondition
+            menu.findItem(R.id.menu_simple_mode)?.isVisible = modeCondition
             menu.findItem(R.id.menu_contribute)?.apply {
                 title = getString(if (BuildConfig.CLOSED_STORE) R.string.get_keepro else R.string.contribute)
                 isVisible = !context.isContributingUser() && modeCondition
@@ -1162,6 +1171,83 @@ class GroupActivity : DatabaseLockActivity() {
 
     override fun hideHomeButtonIfModeIsNotDefault(): Boolean {
         return false
+    }
+
+    /**
+     * Ask the folder to use for the simplified mode of the current database,
+     * after checking that the database can be unlocked with the device unlock (fingerprint)
+     */
+    private fun requestSimpleMode() {
+        val database = mDatabase ?: return
+        val databaseUri = database.fileUri ?: return
+        val showRequirements = {
+            AlertDialog.Builder(this)
+                .setTitle(R.string.simple_mode_requirements_title)
+                .setMessage(R.string.simple_mode_requirements_message)
+                .setPositiveButton(android.R.string.ok, null)
+                .create().show()
+        }
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M
+            || !PreferencesUtil.isDeviceUnlockEnable(this)) {
+            showRequirements()
+            return
+        }
+        CipherDatabaseAction.getInstance(applicationContext)
+            .getCipherDatabase(databaseUri) { cipherDatabase ->
+                if (cipherDatabase == null) {
+                    showRequirements()
+                } else {
+                    showSimpleModeFolderDialog(database, databaseUri)
+                }
+            }
+    }
+
+    private fun showSimpleModeFolderDialog(database: ContextualDatabase, databaseUri: Uri) {
+        val groups = SimpleMode.selectableGroups(database)
+        if (groups.isEmpty())
+            return
+        val currentGroupId = mGroupViewModel.mainGroup?.nodeId
+        var selectedIndex = groups.indexOfFirst { it.first.nodeId == currentGroupId }
+            .coerceAtLeast(0)
+        FileDatabaseHistoryAction.getInstance(applicationContext)
+            .getDatabaseFile(databaseUri) { databaseFile ->
+                val databaseName = databaseFile?.databaseAlias?.ifEmpty { null }
+                    ?: database.name.ifEmpty { databaseUri.lastPathSegment ?: "" }
+                AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.simple_mode_choose_folder_title, databaseName))
+                    .setSingleChoiceItems(
+                        groups.map { it.second }.toTypedArray(),
+                        selectedIndex
+                    ) { _, which ->
+                        selectedIndex = which
+                    }
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .setPositiveButton(R.string.simple_mode_enable) { _, _ ->
+                        val group = groups[selectedIndex].first
+                        AlertDialog.Builder(this)
+                            .setTitle(R.string.simple_mode)
+                            .setMessage(getString(
+                                R.string.simple_mode_enable_confirm_message,
+                                databaseName,
+                                group.title
+                            ))
+                            .setNegativeButton(android.R.string.cancel, null)
+                            .setPositiveButton(R.string.simple_mode_enable) { _, _ ->
+                                SimpleMode.enable(
+                                    this,
+                                    SimpleMode.Configuration(
+                                        databaseUri = databaseUri,
+                                        databaseName = databaseName,
+                                        groupId = group.nodeId.toString(),
+                                        groupName = group.title
+                                    )
+                                )
+                                SimpleMode.lockAndRestartApp(this)
+                            }
+                            .create().show()
+                    }
+                    .create().show()
+            }
     }
 
     private fun requestSort() {

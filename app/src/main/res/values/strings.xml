@@ -816,4 +816,21 @@
     <string name="user_verification_database_credential">Enter the first four characters of your database password</string>
     <string name="first_chars">First chars</string>
     <string name="check">Check</string>
+    <!-- Simplified mode -->
+    <string name="simple_mode">Simplified mode</string>
+    <string name="simple_mode_choose_folder_title">Simplified mode: choose the folder of \"%1$s\"</string>
+    <string name="simple_mode_enable">Activate</string>
+    <string name="simple_mode_enable_confirm_message">The app will only show the entries of the folder \"%2$s\" of the database \"%1$s\", in read-only mode, after unlocking with the fingerprint.\n\nAll the other functions will be hidden until you go back to the normal mode.</string>
+    <string name="simple_mode_requirements_title">Fingerprint unlock required</string>
+    <string name="simple_mode_requirements_message">To activate the simplified mode, the fingerprint (device) unlock must be enabled in the settings and linked to this database: lock the database, then open it again with the master password and the fingerprint button.</string>
+    <string name="simple_mode_unlock_hint">Touch the fingerprint button to open</string>
+    <string name="simple_mode_device_unlock_unavailable">Fingerprint unlock is not available. Go back to the normal mode to open the database.</string>
+    <string name="simple_mode_exit_app">Exit</string>
+    <string name="simple_mode_back_to_normal">Back to normal mode</string>
+    <string name="simple_mode_exit_title">Leave the simplified mode?</string>
+    <string name="simple_mode_exit_message">The database will be locked and the app will be restarted with all its functions.</string>
+    <string name="simple_mode_exit_confirm">Normal mode</string>
+    <string name="simple_mode_search_hint">Search</string>
+    <string name="simple_mode_no_entry">No entry</string>
+    <string name="simple_mode_folder_not_found">The folder of the simplified mode no longer exists in this database. Go back to the normal mode to choose another one.</string>
 </resources>
