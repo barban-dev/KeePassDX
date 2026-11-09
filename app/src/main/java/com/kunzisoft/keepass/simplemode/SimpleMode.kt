@@ -115,15 +115,23 @@ object SimpleMode {
     }
 
     /**
+     * Special groups never shown in the simplified mode: recycle bin and templates
+     */
+    private fun excludedGroups(database: ContextualDatabase): List<Group> {
+        return listOfNotNull(database.recycleBin, database.templatesGroup)
+    }
+
+    /**
      * All the groups of the database that can be selected for the simplified mode
-     * (the recycle bin and its content are excluded), each with its full path.
+     * (the recycle bin, the templates group and their content are excluded),
+     * each with its full path.
      */
     fun selectableGroups(database: ContextualDatabase): List<Pair<Group, String>> {
         val result = mutableListOf<Pair<Group, String>>()
         val root = database.rootGroup ?: return result
-        val recycleBin = database.recycleBin
+        val excludedGroups = excludedGroups(database)
         fun visit(group: Group, path: String) {
-            if (recycleBin != null && group == recycleBin)
+            if (excludedGroups.contains(group))
                 return
             result.add(Pair(group, path))
             group.getChildGroups()
@@ -138,13 +146,13 @@ object SimpleMode {
 
     /**
      * All the entries of [group] and of its sub-groups (sub-folders are hidden
-     * in the simplified mode), excluding the recycle bin, sorted by title.
+     * in the simplified mode), excluding the recycle bin and the templates, sorted by title.
      */
     fun entriesOf(database: ContextualDatabase, group: Group): List<Entry> {
         val result = mutableListOf<Entry>()
-        val recycleBin = database.recycleBin
+        val excludedGroups = excludedGroups(database)
         fun visit(current: Group) {
-            if (recycleBin != null && current == recycleBin)
+            if (excludedGroups.contains(current))
                 return
             result.addAll(current.getChildEntries())
             current.getChildGroups().forEach { visit(it) }

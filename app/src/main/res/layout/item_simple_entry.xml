@@ -24,15 +24,16 @@
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
     android:gravity="center_vertical"
-    android:minHeight="72dp"
+    android:minHeight="@dimen/selectable_min_height"
     android:orientation="horizontal"
     android:paddingVertical="8dp">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/simple_entry_icon"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginEnd="16dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="@dimen/image_list_margin_vertical"
+        android:layout_marginEnd="@dimen/image_list_margin_vertical"
         android:importantForAccessibility="no"
         android:scaleType="fitXY"
         android:src="@drawable/ic_blank_32dp" />
@@ -42,21 +43,22 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:orientation="vertical">
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/simple_entry_title"
+            style="@style/KeepassDXStyle.Title.Entry"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="2"
-            android:textAppearance="?attr/textAppearanceTitleLarge"
             tools:text="Entry" />
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/simple_entry_subtitle"
+            style="@style/KeepassDXStyle.SubTitle.Entry"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
+            android:layout_marginTop="-4dp"
             android:maxLines="1"
-            android:textAppearance="?attr/textAppearanceBodyMedium"
             tools:text="username" />
     </LinearLayout>
 </LinearLayout>

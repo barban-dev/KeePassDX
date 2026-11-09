@@ -25,6 +25,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,7 +42,9 @@ import com.kunzisoft.keepass.activities.EntryActivity
 import com.kunzisoft.keepass.activities.legacy.DatabaseLockActivity
 import com.kunzisoft.keepass.database.ContextualDatabase
 import com.kunzisoft.keepass.database.element.Entry
+import com.kunzisoft.keepass.settings.PreferencesUtil
 import com.kunzisoft.keepass.timeout.TimeoutHelper
+import com.kunzisoft.keepass.view.setTextSize
 
 /**
  * Main screen of the simplified mode: read-only list of the entries of the
@@ -80,6 +83,7 @@ class SimpleEntryListActivity : DatabaseLockActivity() {
         val ta = theme.obtainStyledAttributes(intArrayOf(R.attr.colorSecondary))
         mAdapter.iconColor = ta.getColor(0, Color.WHITE)
         ta.recycle()
+        mAdapter.textSizeMultiplier = PreferencesUtil.getListTextSize(this)
 
         findViewById<RecyclerView>(R.id.simple_entry_list_recycler).apply {
             layoutManager = LinearLayoutManager(this@SimpleEntryListActivity)
@@ -164,6 +168,7 @@ class SimpleEntryListActivity : DatabaseLockActivity() {
 
         var database: ContextualDatabase? = null
         var iconColor: Int = Color.WHITE
+        var textSizeMultiplier: Float = 1F
         private var entries: List<Entry> = emptyList()
 
         @android.annotation.SuppressLint("NotifyDataSetChanged")
@@ -175,7 +180,11 @@ class SimpleEntryListActivity : DatabaseLockActivity() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EntryViewHolder {
             val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.item_simple_entry, parent, false)
-            return EntryViewHolder(view)
+            return EntryViewHolder(view).apply {
+                // Same text size as the normal list (multiplied by the preference)
+                title.setTextSize(TypedValue.COMPLEX_UNIT_PX, title.textSize, textSizeMultiplier)
+                subtitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, subtitle.textSize, textSizeMultiplier)
+            }
         }
 
         override fun onBindViewHolder(holder: EntryViewHolder, position: Int) {
